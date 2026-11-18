@@ -132,6 +132,7 @@ private def integration (cli examples output : FilePath) : IO Unit := do
       ("helper-counterexample", 1, 1), ("auction-counterexample", 1, 1),
       ("purpose-isolation-counterexample", 1, 2)] do
     let report ← invoke cli (examples / name / "plutus.json") (examples / name / "assurance.json") output true code
+    ensure (optText (← field report "solver") "backend" == some "libz3") "native solver backend not recorded"
     let results ← array (← field report "results")
     ensure (results.size == count) "missing property outcomes"
     let runtime ← field report "runtime"

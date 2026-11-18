@@ -51,7 +51,7 @@ def usage : String := "cardano-blaster check <plutus.json> <assurance.json> [opt
   "  --property ID           Select a property (repeatable)\n" ++
   "  --refresh-environment   Create fresh checking contexts for this runtime\n" ++
   "  --profile PROFILE       auto | core | cardano-v3 | cardano-v3-cex\n" ++
-  "  --z3 PATH               Use an explicit solver executable\n" ++
+  "  --z3 PATH               Use the SMT-LIB backend with this Z3 executable\n" ++
   "  --source-types PATH     Use a blueprint-bound Plinth Haskell type manifest\n" ++
   "  --output DIR            Store fresh reports and checking artifacts\n" ++
   "  --timeout SECONDS       Bound each embedded verification worker\n" ++

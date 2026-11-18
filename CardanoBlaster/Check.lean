@@ -216,7 +216,8 @@ def check (options : Options) (run : FilePath) (report : IO.Ref Json) : IO Outco
   writeJson checkedPath assurance
   let nativePath := run / "verifier-report.json"
   let driver := run / "Check.lean"
-  IO.FS.writeFile driver (profile.header ++ "#verify_blueprint CardanoBlasterCheck " ++
+  let backendOption := if options.z3.isSome then "set_option blaster.useSmtlib true\n" else ""
+  IO.FS.writeFile driver (profile.header ++ backendOption ++ "#verify_blueprint CardanoBlasterCheck " ++
     (toJson checkedPath.toString).compress ++ " " ++ (toJson checkedBlueprint.toString).compress ++
     " cex_report " ++ (toJson nativePath.toString).compress ++ "\n")
   progress options s!"Checking {expected.size} properties…"
