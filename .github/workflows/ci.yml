@@ -72,6 +72,7 @@ jobs:
           shim_dir=.lake/packages/Blaster/.lake/build/lib
           if [[ "$RUNNER_OS" == Linux ]]; then
             shim="$shim_dir/libz3shim.so"
+            LD_BIND_NOW=1 .lake/build/bin/cardano-blaster --version
             readelf -d .lake/build/bin/cardano-blaster | grep 'libz3shim.so'
             dependencies=$(readelf -d "$shim")
             globals=$(nm -D --defined-only "$shim")

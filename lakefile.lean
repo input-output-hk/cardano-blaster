@@ -7,7 +7,9 @@ package «CardanoBlaster» where
     if System.Platform.isOSX then
       #["-Wl,-rpath,@loader_path", "-Wl,-rpath,@loader_path/../../packages/Blaster/.lake/build/lib"]
     else
-      #["-Wl,-rpath,$ORIGIN", "-Wl,-rpath,$ORIGIN/../../packages/Blaster/.lake/build/lib"]
+      -- The shim is built against the host glibc. Resolve its symbols at load time.
+      #["-Wl,--allow-shlib-undefined", "-Wl,-rpath,$ORIGIN",
+        "-Wl,-rpath,$ORIGIN/../../packages/Blaster/.lake/build/lib"]
 
 require Blaster from git "https://github.com/input-output-hk/Lean-blaster" @ "2e46f5dc48cd118d3d750832100720847a0fa969"
 require PlutusCore from git "https://github.com/input-output-hk/PlutusCoreBlaster" @ "eed6584454a5c76de20f5b316fea203553d38452"
