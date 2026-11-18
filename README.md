@@ -250,7 +250,7 @@ lake exe native-tests integration "$PWD/dist/cardano-blaster/bin/cardano-blaster
 ```
 
 The installer checks the official Z3 5.4.0 archive against the pinned SHA-256.
-Lake links the static library into the native build. The standalone distribution
+Lake links the static library into the bundled native solver shim. The standalone distribution
 also ships the Z3 executable for checking-environment metadata and SMT-LIB
 fallback. Source runs check dependency source against the pinned revisions.
 

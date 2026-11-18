@@ -66,15 +66,23 @@ jobs:
           echo "Z3_LIB_PATH=$PWD/.lake/z3/bin" >> "$GITHUB_ENV"
       - name: Build native Lean executables
         run: lake build cardano-blaster native-tests
-      - name: Check that the CLI has no shared libz3 dependency
+      - name: Check Z3 linkage and the isolated Linux C++ runtime
         shell: bash
         run: |
+          shim_dir=.lake/packages/Blaster/.lake/build/lib
           if [[ "$RUNNER_OS" == Linux ]]; then
-            dependencies=$(readelf -d .lake/build/bin/cardano-blaster)
+            shim="$shim_dir/libz3shim.so"
+            readelf -d .lake/build/bin/cardano-blaster | grep 'libz3shim.so'
+            dependencies=$(readelf -d "$shim")
+            globals=$(nm -D --defined-only "$shim")
+            if grep -Eq '(_Unwind_|__gxx_personality_v0)' <<< "$globals"; then
+              exit 1
+            fi
           else
-            dependencies=$(otool -L .lake/build/bin/cardano-blaster)
+            otool -L .lake/build/bin/cardano-blaster | grep 'libz3shim.dylib'
+            dependencies=$(otool -L "$shim_dir/libz3shim.dylib")
           fi
-          if grep -E 'libz3(shim)?\.(so|dylib)' <<< "$dependencies"; then
+          if grep -E 'libz3\.(so|dylib)' <<< "$dependencies"; then
             exit 1
           fi
       - name: Check macOS deployment target
