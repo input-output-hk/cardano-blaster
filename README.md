@@ -222,7 +222,7 @@ Source builds use Git, elan, Python 3, `curl`, `unzip`, and a C/C++ toolchain
 (Xcode command line tools on macOS or `build-essential` on Ubuntu).
 
 ```sh
-git clone https://github.com/RSoulatIOHK/cardano-blaster.git
+git clone https://github.com/input-output-hk/cardano-blaster.git
 cd cardano-blaster
 bash tools/install-z3-build.sh
 export Z3_INC_PATH="$PWD/.lake/z3/include"
