@@ -4,7 +4,7 @@ open Lake DSL
 package «CardanoBlaster» where
   moreLeanArgs := #["--threads=4"]
 
-require Blaster from git "https://github.com/input-output-hk/Lean-blaster" @ "24c871c0b7e05922241e1ec4b120485f6cd3d0b9"
+require Blaster from git "https://github.com/input-output-hk/Lean-blaster" @ "488d1fe635d66a8ada10bd62fa801b3fc97feee8"
 require PlutusCore from git "https://github.com/input-output-hk/PlutusCoreBlaster" @ "eed6584454a5c76de20f5b316fea203553d38452"
 require CardanoLedgerApi from git "https://github.com/input-output-hk/CardanoLedgerApiBlaster" @ "c4711cfde34b49b163a627dafafee4526a3450fd"
 
