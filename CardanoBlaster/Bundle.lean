@@ -35,6 +35,10 @@ def buildBundle (destination : FilePath) : IO Unit := do
   IO.FS.writeBinFile (destination / "bin/cardano-blaster") (← IO.FS.readBinFile (← IO.appPath))
   let solver ← Runtime.solver home none
   IO.FS.writeBinFile (destination / "bin/z3") (← IO.FS.readBinFile solver)
+  let shimName := if Platform.isOSX then "libz3shim.dylib" else "libz3shim.so"
+  let shimDir := if ← Runtime.bundled home then home / "bin"
+                 else home / ".lake/packages/Blaster/.lake/build/lib"
+  IO.FS.writeBinFile (destination / "bin" / shimName) (← IO.FS.readBinFile (shimDir / shimName))
   discard <| IO.Process.run { cmd := "chmod", args := #["755", (destination / "bin/cardano-blaster").toString,
     (destination / "bin/z3").toString] }
   for path in (← Runtime.searchPaths home) do

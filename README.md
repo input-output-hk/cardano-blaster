@@ -212,20 +212,23 @@ processes on expiry. For a compiled Plutus blueprint, the checker reads
 `core` profile cannot suppress those imports. For bundles without a Plutus
 version, `--profile auto` uses the digest-checked environment. The
 `cardano-v3-cex` import profile includes the V1 and V2 codecs as well; the
-report records the actual `plutusVersion` separately. `--z3 PATH`
-selects another solver and is recorded as an override.
+report records the actual `plutusVersion` separately. Checks use the native
+libz3 backend first and retry through SMT-LIB if the native query returns
+inconclusive. Native queries have a five-second solver budget. `--z3 PATH` selects the external SMT-LIB backend
+with the supplied executable. The report records the backend and override.
 
 ## Build from source
 
-Developers need Git, elan and a C/C++ toolchain (Xcode command line tools on macOS;
-`build-essential` on Ubuntu). Lean's native backend uses that toolchain to build
-the executable. It is not needed when using a precompiled archive.
+Source builds use Git, elan, Python 3, `curl`, `unzip`, and a C/C++ toolchain
+(Xcode command line tools on macOS or `build-essential` on Ubuntu).
 
 ```sh
-git clone https://github.com/RSoulatIOHK/cardano-blaster.git
+git clone https://github.com/input-output-hk/cardano-blaster.git
 cd cardano-blaster
+bash tools/install-z3-build.sh
+export Z3_INC_PATH="$PWD/.lake/z3/include"
+export Z3_LIB_PATH="$PWD/.lake/z3/bin"
 lake build cardano-blaster
-.lake/build/bin/cardano-blaster setup
 .lake/build/bin/cardano-blaster check examples/game/plutus.json examples/game/assurance.json --refresh-environment
 ```
 
@@ -247,10 +250,10 @@ lake exe native-tests unit
 lake exe native-tests integration "$PWD/dist/cardano-blaster/bin/cardano-blaster" "$PWD/examples" "$PWD/cardano-blaster-results/integration"
 ```
 
-`setup` downloads the official Z3 5.3.1 release after checking the archive's pinned
-SHA-256. This source-build setup uses `curl` and `unzip`; the native archive already
-includes Z3. Source runs also check that dependency checkouts are clean and match
-their exact pinned revisions. No adjacent repository clones are required.
+The installer checks the official Z3 5.4.0 archive against the pinned SHA-256.
+Lake links the static library into the bundled native solver shim. The standalone distribution
+also ships the Z3 executable for checking-environment metadata and SMT-LIB
+fallback. Source runs check dependency source against the pinned revisions.
 
 All CLI and test code is Lean 4. The integration tests run the relocated native
 bundle from another directory with failing stubs for Python, Lean, Lake, Git,

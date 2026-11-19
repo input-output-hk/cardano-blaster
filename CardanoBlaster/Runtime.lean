@@ -5,6 +5,7 @@ namespace CardanoBlaster.Runtime
 open Lean System
 
 def version := "0.2.2"
+def nativeSolveSeconds : Nat := 5
 -- Rebuild this module whenever the pinned runtime lock changes: the lock is
 -- embedded in the native executable and checked against the on-disk file.
 def lockSource : String := include_str "../runtime-lock.json"
@@ -88,9 +89,12 @@ def solver (home : FilePath) (overridePath : Option FilePath) : IO FilePath := d
 
 def solverInfo (path : FilePath) (overrideSolver : Bool) : IO Json := do
   let version ← IO.Process.run { cmd := path.toString, args := #["--version"] }
-  unless overrideSolver || version.startsWith "Z3 version 5.3.1 " do
-    throw <| IO.userError "expected the locked Z3 5.3.1 release"
-  return obj [("path", toJson path.toString), ("sha256", toJson (← hashFile path)),
+  let expected ← text (← field lock "z3") "version"
+  unless overrideSolver || version.startsWith s!"Z3 version {expected} " do
+    throw <| IO.userError s!"expected the locked Z3 {expected} release; run bash tools/install-z3-build.sh to refresh a source checkout"
+  return obj [("backend", toJson (if overrideSolver then "smtlib" else "libz3")),
+    ("smtlibFallbackAfterSeconds", toJson (if overrideSolver then none else some nativeSolveSeconds)),
+    ("path", toJson path.toString), ("sha256", toJson (← hashFile path)),
     ("version", toJson version.trim), ("override", toJson overrideSolver)]
 
 def installSolver (home : FilePath) : IO FilePath := do

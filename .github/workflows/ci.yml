@@ -59,8 +59,33 @@ jobs:
           lint: 'false'
           use-mathlib-cache: 'false'
           use-github-cache: 'false'
+      - name: Install the locked Z3 headers, static library and executable
+        run: |
+          bash tools/install-z3-build.sh
+          echo "Z3_INC_PATH=$PWD/.lake/z3/include" >> "$GITHUB_ENV"
+          echo "Z3_LIB_PATH=$PWD/.lake/z3/bin" >> "$GITHUB_ENV"
       - name: Build native Lean executables
         run: lake build cardano-blaster native-tests
+      - name: Check Z3 linkage and the isolated Linux C++ runtime
+        shell: bash
+        run: |
+          shim_dir=.lake/packages/Blaster/.lake/build/lib
+          if [[ "$RUNNER_OS" == Linux ]]; then
+            shim="$shim_dir/libz3shim.so"
+            LD_BIND_NOW=1 .lake/build/bin/cardano-blaster --version
+            readelf -d .lake/build/bin/cardano-blaster | grep 'libz3shim.so'
+            dependencies=$(readelf -d "$shim")
+            globals=$(nm -D --defined-only "$shim")
+            if grep -Eq '(_Unwind_|__gxx_personality_v0)' <<< "$globals"; then
+              exit 1
+            fi
+          else
+            otool -L .lake/build/bin/cardano-blaster | grep 'libz3shim.dylib'
+            dependencies=$(otool -L "$shim_dir/libz3shim.dylib")
+          fi
+          if grep -E 'libz3\.(so|dylib)' <<< "$dependencies"; then
+            exit 1
+          fi
       - name: Check macOS deployment target
         if: runner.os == 'macOS'
         run: test "$(otool -l .lake/build/bin/cardano-blaster | awk '$1 == "minos" { print $2; exit }')" = '14.0'
