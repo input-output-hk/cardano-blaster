@@ -9,10 +9,10 @@
       "manifestFile": "lake-manifest.json",
       "configFile": "lakefile.lean",
       "subDir": null,
-      "inputRev": "5134b5c5012d4cfac486acb27251c76a16b7c85e",
+      "inputRev": "f3975dc322ced5c6aa4f974aec4e892f90baffc5",
       "name": "Blaster",
       "url": "https://github.com/input-output-hk/Lean-blaster",
-      "rev": "5134b5c5012d4cfac486acb27251c76a16b7c85e"
+      "rev": "f3975dc322ced5c6aa4f974aec4e892f90baffc5"
     },
     {
       "type": "git",
