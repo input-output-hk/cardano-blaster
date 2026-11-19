@@ -213,7 +213,8 @@ processes on expiry. For a compiled Plutus blueprint, the checker reads
 version, `--profile auto` uses the digest-checked environment. The
 `cardano-v3-cex` import profile includes the V1 and V2 codecs as well; the
 report records the actual `plutusVersion` separately. Checks use the native
-libz3 backend by default. `--z3 PATH` selects the external SMT-LIB backend
+libz3 backend first and retry through SMT-LIB if the native query returns
+inconclusive. Native queries have a five-second solver budget. `--z3 PATH` selects the external SMT-LIB backend
 with the supplied executable. The report records the backend and override.
 
 ## Build from source

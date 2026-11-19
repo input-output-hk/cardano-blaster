@@ -11,7 +11,7 @@ package «CardanoBlaster» where
       #["-Wl,--allow-shlib-undefined", "-Wl,-rpath,$ORIGIN",
         "-Wl,-rpath,$ORIGIN/../../packages/Blaster/.lake/build/lib"]
 
-require Blaster from git "https://github.com/input-output-hk/Lean-blaster" @ "2e46f5dc48cd118d3d750832100720847a0fa969"
+require Blaster from git "https://github.com/input-output-hk/Lean-blaster" @ "5134b5c5012d4cfac486acb27251c76a16b7c85e"
 require PlutusCore from git "https://github.com/input-output-hk/PlutusCoreBlaster" @ "eed6584454a5c76de20f5b316fea203553d38452"
 require CardanoLedgerApi from git "https://github.com/input-output-hk/CardanoLedgerApiBlaster" @ "c4711cfde34b49b163a627dafafee4526a3450fd"
 
